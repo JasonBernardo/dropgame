@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Untitled Document</title>
+    <link href="css/reset.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+
+	<script src="js/item.js"></script>
+    <script>
+        //instantiate one ground at bottom
+        var ground = new Item("ground", 0, 500);
+        ground.create();
+        
+        /*start game*/
+        //an array to keep track of all the drops
+        var drop_array = new Array();
+        //start a timer
+        //generate drop every so often
+        var spawnTimer = setInterval(spawnDrop,500);
+        //loops through all drops in array
+        var moveTimer = setInterval(moveDrop,1000/30);
+        //instantiates (spawns) one raindrop
+        function spawnDrop(){
+             //instantiate some drops
+        var another_drop = new Item("raindrop", Math.floor(Math.random()*720), -50);
+        another_drop.create();
+        drop_array.push(another_drop);
+        }
+        
+        function moveDrop(){
+            for(var i=0; i<drop_array.length; i++){
+                drop_array[i].y += 3;
+                drop_array[i].item_on_page.style.top= drop_array[i].y+"px";
+                
+                //if drop is too far down...
+                if(drop_array[i].y >500){
+                    drop_array[i].destroy();
+                
+                //destroy it
+                    }
+            }
+        }
+       
+    </script>
+</body>
+</html>
