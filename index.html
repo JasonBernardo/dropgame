@@ -8,11 +8,18 @@
 </head>
 
 <body>
-
+    <p id="drop_counter"></p>
 	<script src="js/item.js"></script>
     <script>
+        //instantiate one bucket at bottom
+        var bucket = new Item("bucket", 0, 425, 100, 75);
+        bucket.create();
+        
+        document.onkeydown = function(e){
+            checkKey(e);
+        }
         //instantiate one ground at bottom
-        var ground = new Item("ground", 0, 500);
+        var ground = new Item("ground", 0, 500, 720, 50);
         ground.create();
         
         /*start game*/
@@ -22,11 +29,11 @@
         //generate drop every so often
         var spawnTimer = setInterval(spawnDrop,500);
         //loops through all drops in array
-        var moveTimer = setInterval(moveDrop,1000/30);
+        var moveTimer = setInterval(moveDrop,1000/100);
         //instantiates (spawns) one raindrop
         function spawnDrop(){
              //instantiate some drops
-        var another_drop = new Item("raindrop", Math.floor(Math.random()*720), -50);
+        var another_drop = new Item("raindrop", Math.floor(Math.random()*720), -50, 50, 50);
         another_drop.create();
         drop_array.push(another_drop);
         }
@@ -36,6 +43,12 @@
                 drop_array[i].y += 3;
                 drop_array[i].item_on_page.style.top= drop_array[i].y+"px";
                 
+                //if the touch is dropping the bucket...
+                
+                if(collisionCheck(drop_array[i],bucket)){
+                   //destroy the drop
+                   drop_array[i].destroy();
+                   }
                 //if drop is too far down...
                 if(drop_array[i].y >500){
                     drop_array[i].destroy();
@@ -44,7 +57,52 @@
                     }
             }
         }
-       
+        /**this method causes various reactions to keys being pushed
+        * @param e
+        */
+        function checkKey(e){
+            //explain e to all browsers
+            e = e || window.event;
+            if(e.keyCode ==  39){
+                console.log("right");
+                bucket.x +=15;
+                bucket.item_on_page.style.left = bucket.x+"px";
+            }else if(e.keyCode ==  37){
+                 bucket.x -=15;
+                bucket.item_on_page.style.left = bucket.x+"px";
+                console.log("left");
+            }
+            
+        }//end function e
+       /**this method sees if 2 items are touching
+       *@param sm_obj
+       *@param lg_obj
+       *return               true if touching
+       */
+       function collisionCheck(sm_obj,lg_obj){
+            var smL=sm_obj.x;
+            var smR=sm_obj.x + sm_obj.width;
+            var smT=sm_obj.y;
+            var smB=sm_obj.y + sm_obj.height;
+            var bigL=lg_obj.x;
+            var bigR=lg_obj.x +lg_obj.width;
+            var bigT=lg_obj.y;
+            var bigB=lg_obj.y + lg_obj.height;
+            
+            /*if((smR < bigR) && (smL > bigL)){
+                if((smB < bigB) && (smT> bigT)){
+                return true;
+                }
+            }*/
+           if((smR > bigL) && (smL < bigR)){
+                if((smB > bigT) && (smT < bigB)){
+                return true;
+                }
+            }
+           
+            return false;
+        }
+        
     </script>
 </body>
 </html>
